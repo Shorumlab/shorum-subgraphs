@@ -1,0 +1,28 @@
+# FeeDistributor
+
+type BackerFeeFollowModule @entity {
+  # Contract address
+  id: ID!
+
+  hub: String!
+
+  moduleGlobals: String!
+
+  totalDistributors: BigInt!
+
+  updateAt: BigInt!
+}
+
+type ProfileDistributor @entity {
+  
+  id: ID!
+
+  createdBlock: BigInt!
+
+  profileId: BigInt!
+
+  distributor: String! 
+  
+  timestamp: BigInt!
+}
+

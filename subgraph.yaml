@@ -1,0 +1,58 @@
+specVersion: 0.0.2
+description: Shorum subgraph for ETH Shanghai Hackathon
+repository: 
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: BackerFeeFollowModule
+    network: matic 
+    source:
+      address: '0xE19122416BeeD4cbaDd663878de9af7c0eb32368'
+      abi: BackerFeeFollowModule
+      startBlock: 28952821
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/backerFeeFollowModule.ts
+      entities:
+        - Distributor
+      abis:
+        - name: BackerFeeFollowModule
+          file: ./abis/BackerFeeFollowModule.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: DistributorCreated(uint256,address,uint256)
+          handler: handleDistributorCreated 
+# templates:
+#   - kind: ethereum/contract
+#     name: Pair
+#     network: mainnet
+#     source:
+#       abi: Pair
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.4
+#       language: wasm/assemblyscript
+#       file: ./src/mappings/core.ts
+#       entities:
+#         - Pair
+#         - Token
+#       abis:
+#         - name: Pair
+#           file: ./abis/pair.json
+#         - name: Factory
+#           file: ./abis/factory.json
+#       eventHandlers:
+#         - event: Mint(indexed address,uint256,uint256)
+#           handler: handleMint
+#         - event: Burn(indexed address,uint256,uint256,indexed address)
+#           handler: handleBurn
+#         - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+#           handler: handleSwap
+#         - event: Transfer(indexed address,indexed address,uint256)
+#           handler: handleTransfer
+#         - event: Sync(uint112,uint112)
+#           handler: handleSync
