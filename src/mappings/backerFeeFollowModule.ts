@@ -8,6 +8,7 @@ import {
   BIG_DECIMAL_ZERO,
   BIG_INT_ONE,
   BIG_INT_ONE_DAY_SECONDS,
+  ADDRESS_ZERO,
   BIG_INT_ZERO,
   BACKER_FEE_FOLLOW_MODULE_ADDRESS,
 } from "./helper";
@@ -47,9 +48,7 @@ function getProfileDistributor(
     // );
     profileDistributor = new ProfileDistributor(id.toString());
     profileDistributor.profileId = id;
-    profileDistributor.distributor = Address.fromString(
-      "0x0000000000000000000000000000000000000000"
-    );
+    profileDistributor.distributor = ADDRESS_ZERO;
     profileDistributor.save();
   }
 
@@ -60,12 +59,12 @@ function getProfileDistributor(
 export function handleDistributorCreated(event: DistributorCreated): void {
   
   log.info("Distributor {} Created for profile id: {}", [
-    event.params.param1.toString(),
-    event.params.param0.toString(),
+    event.parameters[1].value.toString(),
+    event.parameters[0].value.toString(),
   ]);
-  const profileId = event.params.param0
-  const distributor = event.params.param1
-  const allDistributors = event.params.param2
+  const profileId = event.parameters[0].value.toBigInt();
+  const distributor = event.parameters[1].value.toBytes();
+  const allDistributors = event.parameters[2].value.toBigInt();
   
   const profileDistributor = getProfileDistributor(profileId, event.block)
   profileDistributor.profileId = profileId
