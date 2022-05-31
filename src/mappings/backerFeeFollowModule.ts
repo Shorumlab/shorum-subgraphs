@@ -18,7 +18,7 @@ function getBackerFeeFollowModule(block: ethereum.Block): BackerFeeFollowModule{
   let backerFeeFollowModule = BackerFeeFollowModule.load(BACKER_FEE_FOLLOW_MODULE_ADDRESS.toHex())
 
   if (backerFeeFollowModule == null) {
-    const contract = BackerFeeFollowModule.bind(
+    const contract = BackerFeeFollowModuleContract.bind(
       BACKER_FEE_FOLLOW_MODULE_ADDRESS
     );
     backerFeeFollowModule = new BackerFeeFollowModule(
@@ -42,12 +42,14 @@ function getProfileDistributor(
   let profileDistributor = ProfileDistributor.load(id.toString());
 
   if (profileDistributor == null) {
-    const contract = BackerFeeFollowModule.bind(
-      BACKER_FEE_FOLLOW_MODULE_ADDRESS
-    );
-    profileDistributor = new ProfileDistributor(id);
+    // const contract = BackerFeeFollowModuleContract.bind(
+    //   BACKER_FEE_FOLLOW_MODULE_ADDRESS
+    // );
+    profileDistributor = new ProfileDistributor(id.toString());
     profileDistributor.profileId = id;
-    profileDistributor.distributor = "0x0";
+    profileDistributor.distributor = Address.fromString(
+      "0x0000000000000000000000000000000000000000"
+    );
     profileDistributor.save();
   }
 
@@ -57,10 +59,13 @@ function getProfileDistributor(
 // emit DistributorCreated(profileId, distributor, allDistributors.length);
 export function handleDistributorCreated(event: DistributorCreated): void {
   
-  log.info("Distributor {} Created for profile id: {}", [event.params[1].toString(), event.params[0].toString()]);
-  const profileId = event.params[0]
-  const distributor = event.params[1]
-  const allDistributors = event.params[2]
+  log.info("Distributor {} Created for profile id: {}", [
+    event.params.param1.toString(),
+    event.params.param0.toString(),
+  ]);
+  const profileId = event.params.param0
+  const distributor = event.params.param1
+  const allDistributors = event.params.param2
   
   const profileDistributor = getProfileDistributor(profileId, event.block)
   profileDistributor.profileId = profileId
@@ -70,6 +75,6 @@ export function handleDistributorCreated(event: DistributorCreated): void {
   profileDistributor.save()
 
   const followModule = getBackerFeeFollowModule(event.block)
-  followModule.totalDistributors = allDistributors
+  followModule.totalDistributors = BigInt.fromString(allDistributors.toString());
   followModule.save()
 }

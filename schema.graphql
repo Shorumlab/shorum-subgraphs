@@ -4,9 +4,9 @@ type BackerFeeFollowModule @entity {
   # Contract address
   id: ID!
 
-  hub: String!
+  hub: Bytes!
 
-  moduleGlobals: String!
+  moduleGlobals: Bytes!
 
   totalDistributors: BigInt!
 
@@ -21,7 +21,7 @@ type ProfileDistributor @entity {
 
   profileId: BigInt!
 
-  distributor: String! 
+  distributor: Bytes! 
   
   timestamp: BigInt!
 }
