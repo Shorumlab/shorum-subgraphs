@@ -7,3 +7,8 @@ Right now it is mainly to track the binding relationship between `profile id` an
 ## Running Locally
 
 Make sure to update package.json settings to point to your own graph account.
+
+## Deployment
+
+Demo Subgraph Deployed at `https://thegraph.com/hosted-service/subgraph/starit/shorum-demo`
+
