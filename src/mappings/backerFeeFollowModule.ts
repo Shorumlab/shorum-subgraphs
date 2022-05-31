@@ -58,10 +58,10 @@ function getProfileDistributor(
 // emit DistributorCreated(profileId, distributor, allDistributors.length);
 export function handleDistributorCreated(event: DistributorCreated): void {
   
-  log.info("Distributor {} Created for profile id: {}", [
-    event.parameters[1].value.toString(),
-    event.parameters[0].value.toString(),
-  ]);
+  // log.info("Distributor {} Created for profile id: {}", [
+  //   event.parameters[1].value.toString(),
+  //   event.parameters[0].value.toString(),
+  // ]);
   const profileId = event.parameters[0].value.toBigInt();
   const distributor = event.parameters[1].value.toBytes();
   const allDistributors = event.parameters[2].value.toBigInt();
