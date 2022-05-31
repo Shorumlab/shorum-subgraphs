@@ -12,7 +12,7 @@ import {
   BIG_INT_ZERO,
   BACKER_FEE_FOLLOW_MODULE_ADDRESS,
 } from "./helper";
-import { Address, BigDecimal, BigInt, dataSource, ethereum, log } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, Bytes, BigInt, dataSource, ethereum, log } from '@graphprotocol/graph-ts'
 import { BackerFeeFollowModule, ProfileDistributor } from "../types/schema";
 
 function getBackerFeeFollowModule(block: ethereum.Block): BackerFeeFollowModule{
@@ -49,6 +49,8 @@ function getProfileDistributor(
     profileDistributor = new ProfileDistributor(id.toString());
     profileDistributor.profileId = id;
     profileDistributor.distributor = ADDRESS_ZERO;
+    profileDistributor.createdBlock = BIG_INT_ZERO;
+    profileDistributor.timestamp = BIG_INT_ZERO;
     profileDistributor.save();
   }
 
@@ -58,22 +60,25 @@ function getProfileDistributor(
 // emit DistributorCreated(profileId, distributor, allDistributors.length);
 export function handleDistributorCreated(event: DistributorCreated): void {
   
-  // log.info("Distributor {} Created for profile id: {}", [
-  //   event.parameters[1].value.toString(),
-  //   event.parameters[0].value.toString(),
-  // ]);
-  const profileId = event.parameters[0].value.toBigInt();
-  const distributor = event.parameters[1].value.toBytes();
-  const allDistributors = event.parameters[2].value.toBigInt();
-  
+  const profileId = event.params.param0;
+  const allDistributors = event.params.param2;
+
+  const contract = BackerFeeFollowModuleContract.bind(BACKER_FEE_FOLLOW_MODULE_ADDRESS);
   const profileDistributor = getProfileDistributor(profileId, event.block)
+
+
   profileDistributor.profileId = profileId
-  profileDistributor.distributor = distributor
+  profileDistributor.distributor = contract.getProfileData(profileId).distributor
   profileDistributor.createdBlock = event.block.number
   profileDistributor.timestamp = event.block.timestamp
   profileDistributor.save()
+  
+  log.info("Distributor {} Created for profile id: {}", [
+    profileDistributor.distributor.toString(),
+    event.params.param0.toString(),
+  ]);
 
   const followModule = getBackerFeeFollowModule(event.block)
-  followModule.totalDistributors = BigInt.fromString(allDistributors.toString());
+  followModule.totalDistributors = allDistributors;
   followModule.save()
 }
